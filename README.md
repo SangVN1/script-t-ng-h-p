@@ -1,1 +1,0 @@
-# script-t-ng-h-p
