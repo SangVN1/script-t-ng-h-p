@@ -3,7 +3,7 @@
     Author: Sang
     Library: Fluent UI
     Support: PC & Mobile
-    Update: Added Luminon Hub
+    Update: Added "Escape Tsunami For Brainrots"
 ]]
 
 -- 1. KHỞI TẠO & DỌN DẸP
@@ -37,7 +37,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- 3. CẤU HÌNH CỬA SỔ MENU
 local Window = Fluent:CreateWindow({
     Title = "Redyn Hub | Script by Sang",
-    SubTitle = "Added Luminon Hub",
+    SubTitle = "Escape Tsunami Added",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Acrylic = false, 
@@ -75,13 +75,108 @@ if UserInputService.TouchEnabled then
     end)
 end
 
--- 5. TẠO TAB & CHỨC NĂNG
+-- 5. TẠO CÁC TAB
 local Tabs = {
+    Tsunami = Window:AddTab({ Title = "Escape Tsunami", Icon = "waves" }), -- Tab Mới
     BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),            
     BloxFruit = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
     Misc = Window:AddTab({ Title = "Tiện ích & Hub", Icon = "wrench" }), 
     Settings = Window:AddTab({ Title = "Cài đặt", Icon = "settings" })
 }
+
+-- >> TAB: ESCAPE TSUNAMI FOR BRAINROTS (MỚI)
+Tabs.Tsunami:AddParagraph({
+    Title = "Lưu ý",
+    Content = "Chức năng Auto Farm sẽ tự động tìm và nhặt các Brainrots/Coins trên bản đồ."
+})
+
+local AutoFarmTsunami = false
+Tabs.Tsunami:AddToggle("AutoFarmBrainrots", {
+    Title = "Auto Collect (Brainrots/Coins)",
+    Description = "Tự động bay đi nhặt đồ",
+    Default = false,
+    Callback = function(Value)
+        AutoFarmTsunami = Value
+        if Value then
+            task.spawn(function()
+                while AutoFarmTsunami do
+                    task.wait(0.1)
+                    pcall(function()
+                        local player = game.Players.LocalPlayer
+                        if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
+                        
+                        -- Tìm các vật phẩm có thể nhặt (TouchInterest hoặc tên Coin/Brainrot)
+                        for _, v in pairs(workspace:GetDescendants()) do
+                            if not AutoFarmTsunami then break end
+                            if v:IsA("Part") or v:IsA("MeshPart") then
+                                if (v.Name:lower():find("coin") or v.Name:lower():find("brainrot") or v:FindFirstChild("TouchInterest")) and v.Transparency < 1 then
+                                    player.Character.HumanoidRootPart.CFrame = v.CFrame
+                                    task.wait(0.1) -- Đợi xíu để nhặt
+                                end
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+    end
+})
+
+Tabs.Tsunami:AddButton({
+    Title = "🌊 Né Sóng Thần (Bay lên cao)",
+    Description = "Teleport lên trời để an toàn",
+    Callback = function()
+        pcall(function()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, 100, 0)
+            -- Tạo platform để đứng
+            local p = Instance.new("Part", workspace)
+            p.Size = Vector3.new(10, 1, 10)
+            p.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame - Vector3.new(0, 3, 0)
+            p.Anchored = true
+        end)
+    end
+})
+
+Tabs.Tsunami:AddSlider("WalkSpeedTsunami", {
+    Title = "Tốc độ chạy (WalkSpeed)",
+    Description = "Chỉnh tốc độ để chạy nhanh hơn sóng",
+    Default = 16,
+    Min = 16,
+    Max = 200,
+    Rounding = 0,
+    Callback = function(Value)
+        pcall(function()
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+        end)
+    end
+})
+
+Tabs.Tsunami:AddSlider("JumpPowerTsunami", {
+    Title = "Sức bật nhảy (JumpPower)",
+    Description = "Nhảy cao hơn",
+    Default = 50,
+    Min = 50,
+    Max = 300,
+    Rounding = 0,
+    Callback = function(Value)
+        pcall(function()
+            game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+        end)
+    end
+})
+
+Tabs.Tsunami:AddButton({
+    Title = "Tải Script Rời (Solix Hub / Pastebin)",
+    Description = "Thử tải script hack full tính năng từ mạng (Nếu có)",
+    Callback = function()
+        -- Script phổ biến cho dòng game này (Thường là Solix hoặc tương tự)
+        -- Lưu ý: Link này có thể thay đổi tùy tác giả
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/REDzHUB/BloxFruits/main/redz9999"))() 
+        -- (Dùng tạm Redz Hub vì nó hỗ trợ nhiều game, hoặc bạn có thể paste link khác vào đây)
+        Fluent:Notify({Title = "Thông báo", Content = "Đang thử tải Script ngoài...", Duration = 3})
+    end
+})
+
 
 -- >> TAB: BEE SWARM
 Tabs.BSS:AddButton({
@@ -121,9 +216,9 @@ Tabs.BloxFruit:AddButton({
 -- >> TAB: TIỆN ÍCH & LUMINON
 Tabs.Misc:AddButton({
     Title = "🌟 Chạy Luminon Hub",
-    Description = "Script tổng hợp đa năng (Mới thêm)",
+    Description = "Script tổng hợp đa năng",
     Callback = function()
-        Window:Minimize() -- Ẩn menu Redyn để tránh vướng
+        Window:Minimize() 
         task.spawn(function()
             loadstring(game:HttpGet("http://luminon.top/loader.lua"))()
         end)
@@ -168,6 +263,6 @@ Window:SelectTab(1)
 
 Fluent:Notify({
     Title = "Redyn Hub",
-    Content = "Script by Sang đã khởi động thành công!",
+    Content = "Cập nhật thành công: Escape Tsunami!",
     Duration = 5
 })
