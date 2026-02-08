@@ -2,14 +2,14 @@
     REDYN HUB - MASTER COLLECTION
     Author: Sang
     Library: Fluent UI
-    Support: PC & Mobile (Toggle Button included)
-    Note: Removed Doors Tab
+    Support: PC & Mobile
+    Update: Added Luminon Hub
 ]]
 
 -- 1. KHỞI TẠO & DỌN DẸP
 if not game:IsLoaded() then game.Loaded:Wait() end
 
--- Xóa các GUI cũ để tránh bị trùng lặp
+-- Xóa các GUI cũ
 for _, v in pairs(game.CoreGui:GetChildren()) do
     if v.Name == "RedynMobileToggle" or (v.Name == "ScreenGui" and v:FindFirstChild("Frame")) then
         v:Destroy()
@@ -37,15 +37,15 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 -- 3. CẤU HÌNH CỬA SỔ MENU
 local Window = Fluent:CreateWindow({
     Title = "Redyn Hub | Script by Sang",
-    SubTitle = "Master Collection",
+    SubTitle = "Added Luminon Hub",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
-    Acrylic = false, -- Tắt Acrylic để tối ưu FPS cho Mobile
+    Acrylic = false, 
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- 4. TẠO NÚT BẬT/TẮT CHO MOBILE (MOBILE TOGGLE)
+-- 4. TẠO NÚT BẬT/TẮT CHO MOBILE
 local UserInputService = game:GetService("UserInputService")
 if UserInputService.TouchEnabled then
     local ScreenGui = Instance.new("ScreenGui")
@@ -58,16 +58,15 @@ if UserInputService.TouchEnabled then
     ToggleBtn.Name = "ToggleBtn"
     ToggleBtn.Parent = ScreenGui
     ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    ToggleBtn.Position = UDim2.new(0.9, -50, 0.5, 0) -- Vị trí bên phải màn hình
+    ToggleBtn.Position = UDim2.new(0.9, -50, 0.5, 0)
     ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
-    ToggleBtn.Image = "rbxassetid://10057361026" -- Icon Redyn/Logo
-    ToggleBtn.Draggable = true -- Cho phép kéo nút
+    ToggleBtn.Image = "rbxassetid://10057361026"
+    ToggleBtn.Draggable = true
     ToggleBtn.Active = true
     
-    UICorner.CornerRadius = UDim.new(1, 0) -- Bo tròn nút
+    UICorner.CornerRadius = UDim.new(1, 0)
     UICorner.Parent = ToggleBtn
     
-    -- Xử lý sự kiện click để ẩn/hiện menu
     ToggleBtn.MouseButton1Click:Connect(function()
         local vim = game:GetService("VirtualInputManager")
         vim:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
@@ -76,12 +75,11 @@ if UserInputService.TouchEnabled then
     end)
 end
 
--- 5. TẠO TAB & CHỨC NĂNG (ĐÃ XÓA DOORS)
+-- 5. TẠO TAB & CHỨC NĂNG
 local Tabs = {
-    -- Đã xóa Doors
     BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),            
     BloxFruit = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
-    Misc = Window:AddTab({ Title = "Tiện ích", Icon = "wrench" }), 
+    Misc = Window:AddTab({ Title = "Tiện ích & Hub", Icon = "wrench" }), 
     Settings = Window:AddTab({ Title = "Cài đặt", Icon = "settings" })
 }
 
@@ -107,7 +105,6 @@ Tabs.BloxFruit:AddButton({
         
         task.spawn(function()
             if not game:IsLoaded() then game.Loaded:Wait() end
-            -- Tự động chọn phe Hải Tặc
             pcall(function() 
                 local Button = game:GetService("Players").LocalPlayer.PlayerGui.Main.ChooseTeam.Container.Pirates.Frame.TextButton
                 if Button then 
@@ -116,13 +113,23 @@ Tabs.BloxFruit:AddButton({
                     end
                 end
             end)
-            -- Load Script
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Anniecreate86/BloxFruits/refs/heads/main/BetaHub-BF"))()
         end)
     end
 })
 
--- >> TAB: TIỆN ÍCH (MISC)
+-- >> TAB: TIỆN ÍCH & LUMINON
+Tabs.Misc:AddButton({
+    Title = "🌟 Chạy Luminon Hub",
+    Description = "Script tổng hợp đa năng (Mới thêm)",
+    Callback = function()
+        Window:Minimize() -- Ẩn menu Redyn để tránh vướng
+        task.spawn(function()
+            loadstring(game:HttpGet("http://luminon.top/loader.lua"))()
+        end)
+    end
+})
+
 Tabs.Misc:AddButton({
     Title = "🚀 FPS Boost (Giảm Lag)",
     Description = "Xóa Texture, làm mượt đồ họa",
