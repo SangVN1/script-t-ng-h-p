@@ -1,6 +1,6 @@
 --[[
-    REDYN HUB - PHIÊN BẢN CHUẨN (SCRIPT BY SANG)
-    Full Features: Beta Hub, Zephyr V2, Atlas BSS
+    REDYN HUB - SCRIPT BY SANG
+    Version: No Doors Edition
     Support: Mobile (Nút bật tắt), PC, Xeno
 ]]
 
@@ -69,26 +69,13 @@ if UserInputService.TouchEnabled then
     end)
 end
 
--- 5. TẠO CÁC TAB CHỨC NĂNG
+-- 5. TẠO CÁC TAB CHỨC NĂNG (ĐÃ XÓA DOORS)
 local Tabs = {
-    Doors = Window:AddTab({ Title = "DOORS", Icon = "door-open" }),       
     BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),           
     BloxFruit = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
     Misc = Window:AddTab({ Title = "Tiện ích", Icon = "wrench" }), 
     Settings = Window:AddTab({ Title = "Cài đặt", Icon = "settings" })
 }
-
--- >> TAB: DOORS
-Tabs.Doors:AddButton({
-    Title = "Chạy Zephyr V2",
-    Description = "Hack Doors: ESP, Entity Spawner...",
-    Callback = function()
-        Window:Minimize()
-        task.spawn(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/TheRealAvrwm/Zephyr-V2/refs/heads/main/script.lua", true))()
-        end)
-    end
-})
 
 -- >> TAB: BEE SWARM SIMULATOR
 Tabs.BSS:AddButton({
