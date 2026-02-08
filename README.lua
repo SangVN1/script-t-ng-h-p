@@ -1,6 +1,8 @@
 --[[
-    REDYN HUB - PHIÊN BẢN FIX (ĐÃ THÊM TSUNAMI)
-    Update: Đưa Tab Tsunami lên đầu, Fix lỗi hiển thị
+    REDYN HUB - PHIÊN BẢN FULL (UPDATE JAILBREAK)
+    Author: Sang
+    Library: Fluent UI
+    Update: Thêm Tab Auto Rob & Auto Arrest
 ]]
 
 -- 1. DỌN DẸP UI CŨ
@@ -23,8 +25,8 @@ if not success or not Fluent then
 end
 
 local Window = Fluent:CreateWindow({
-    Title = "Redyn Hub | Escape Tsunami",
-    SubTitle = "Script by Sang",
+    Title = "Redyn Hub | Script by Sang",
+    SubTitle = "Master Collection",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Acrylic = false, 
@@ -32,7 +34,7 @@ local Window = Fluent:CreateWindow({
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- 3. NÚT MOBILE
+-- 3. NÚT MOBILE (BẬT TẮT MENU)
 local UserInputService = game:GetService("UserInputService")
 if UserInputService.TouchEnabled then
     local ScreenGui = Instance.new("ScreenGui")
@@ -57,132 +59,100 @@ if UserInputService.TouchEnabled then
     end)
 end
 
--- 4. TẠO TAB (ĐƯA TSUNAMI LÊN ĐẦU)
+-- 4. TẠO CÁC TAB
 local Tabs = {
-    Tsunami = Window:AddTab({ Title = "🌊 Escape Tsunami", Icon = "waves" }), -- Tab này hiện đầu tiên
+    Main = Window:AddTab({ Title = "Escape Tsunami", Icon = "waves" }), 
+    Jailbreak = Window:AddTab({ Title = "Jailbreak / Rob", Icon = "car" }), -- >> TAB MỚI
     BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),
     BloxFruit = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
-    Misc = Window:AddTab({ Title = "Tiện ích & Hub", Icon = "wrench" }),
+    Misc = Window:AddTab({ Title = "Tiện ích", Icon = "wrench" }),
 }
 
---Options = Fluent.Options -- Khai báo Options để dùng cho Toggle
+-- >>>>>>> TAB 1: ESCAPE TSUNAMI <<<<<<<
 
--- >>>>>>> CODE CHO ESCAPE TSUNAMI FOR BRAINROTS <<<<<<<
-
-Tabs.Tsunami:AddParagraph({
-    Title = "Chức năng Game Brainrots",
-    Content = "Bật Auto bên dưới để tự động gom tiền/vật phẩm."
+Tabs.Main:AddParagraph({
+    Title = "Script Chính",
+    Content = "Nhấn nút bên dưới để chạy Luminon Hub cho Escape Tsunami."
 })
 
-local AutoFarm = false
-Tabs.Tsunami:AddToggle("AutoCollect", {
-    Title = "Auto Farm (Brainrots/Coins)",
-    Description = "Tự động bay đến nhặt đồ",
-    Default = false,
-    Callback = function(Value)
-        AutoFarm = Value
-        if Value then
-            task.spawn(function()
-                while AutoFarm do
-                    task.wait()
-                    pcall(function()
-                        local lp = game.Players.LocalPlayer
-                        local char = lp.Character
-                        if not char or not char:FindFirstChild("HumanoidRootPart") then return end
-
-                        -- Tìm vật phẩm (Handle, Coin, hoặc Brainrot)
-                        for _, v in pairs(workspace:GetDescendants()) do
-                            if not AutoFarm then break end
-                            -- Logic: Vật phẩm thường có TouchInterest hoặc tên chứa Coin/Brain
-                            if (v.Name:lower():find("coin") or v.Name:lower():find("brain") or v:FindFirstChild("TouchInterest")) and v:IsA("BasePart") then
-                                if v.Transparency < 1 then -- Chỉ nhặt vật phẩm đang hiện
-                                    char.HumanoidRootPart.CFrame = v.CFrame
-                                    task.wait(0.15) -- Dừng lại xíu để game nhận diện đã nhặt
-                                end
-                            end
-                        end
-                    end)
-                end
-            end)
-        end
-    end
-})
-
-Tabs.Tsunami:AddButton({
-    Title = "🛡️ Chế độ Bất Tử (God Mode)",
-    Description = "Xóa nước để không bị chết đuối (Client)",
+Tabs.Main:AddButton({
+    Title = "🌟 Chạy Luminon Hub",
+    Description = "Load Script: luminon.top",
     Callback = function()
-        pcall(function()
-            if workspace:FindFirstChild("Water") then
-                workspace.Water:Destroy()
-            end
-            Fluent:Notify({Title = "Đã xóa nước", Content = "Bạn sẽ không bị nước đẩy nữa!", Duration = 3})
+        Window:Minimize()
+        task.spawn(function()
+            loadstring(game:HttpGet("http://luminon.top/loader.lua"))()
         end)
     end
 })
 
-Tabs.Tsunami:AddButton({
-    Title = "🛸 Bay lên vùng an toàn (Safe Zone)",
-    Description = "Teleport lên cao 200m",
+-- >>>>>>> TAB 2: JAILBREAK / ROB (MỚI THÊM) <<<<<<<
+
+Tabs.Jailbreak:AddParagraph({
+    Title = "Hỗ trợ Project Auto",
+    Content = "Các Script hỗ trợ tự động cướp tiền hoặc bắt tội phạm (Jailbreak/Mad City)."
+})
+
+Tabs.Jailbreak:AddButton({
+    Title = "💰 Auto Rob (Tự động cướp)",
+    Description = "Chạy Script AutoRob V6",
     Callback = function()
-        pcall(function()
-            local hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
-            hrp.CFrame = hrp.CFrame + Vector3.new(0, 200, 0)
-            
-            -- Tạo cái sàn để đứng
-            local part = Instance.new("Part", workspace)
-            part.Size = Vector3.new(20, 1, 20)
-            part.Position = hrp.Position - Vector3.new(0, 3, 0)
-            part.Anchored = true
-        end)
+        Window:Minimize()
+        loadstring(game:HttpGet('https://scripts.projectauto.xyz/AutoRobV6'))()
     end
 })
 
-Tabs.Tsunami:AddSlider("SpeedHack", {
-    Title = "Tốc độ chạy",
-    Description = "Chỉnh tốc độ nhân vật",
-    Default = 16,
-    Min = 16,
-    Max = 300,
-    Rounding = 0,
-    Callback = function(Value)
-        pcall(function()
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-        end)
+Tabs.Jailbreak:AddButton({
+    Title = "👮 Auto Arrest (Tự động bắt)",
+    Description = "Chạy Script AutoArrest V4",
+    Callback = function()
+        Window:Minimize()
+        loadstring(game:HttpGet('https://scripts.projectauto.xyz/AutoArrestV4'))()
     end
 })
 
--- >>>>>>> CÁC TAB KHÁC GIỮ NGUYÊN <<<<<<<
+-- >>>>>>> TAB 3: BEE SWARM SIMULATOR <<<<<<<
 
--- BSS
+Tabs.BSS:AddParagraph({
+    Title = "Hỗ trợ Bee Swarm",
+    Content = "Script Atlas BSS chuyên dùng để Auto Farm Mật, Phấn hoa và làm nhiệm vụ tự động."
+})
+
 Tabs.BSS:AddButton({
-    Title = "Chạy Atlas BSS",
+    Title = "🐝 Chạy Atlas BSS",
+    Description = "Auto Farm tốt nhất hiện nay",
     Callback = function()
         Window:Minimize()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Chris12089/atlasbss/main/script.lua"))()
     end
 })
 
--- Blox Fruits
+-- >>>>>>> TAB 4: BLOX FRUITS <<<<<<<
+
+Tabs.BloxFruit:AddParagraph({
+    Title = "Hỗ trợ Blox Fruits",
+    Content = "Script Beta Hub giúp Auto Farm Level, Raid, Dungeon và tự động chọn Team Hải Tặc."
+})
+
 Tabs.BloxFruit:AddButton({
     Title = "🍉 Chạy Beta Hub",
+    Description = "Auto Farm / Auto Raid / PVP",
     Callback = function()
         Window:Minimize()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Anniecreate86/BloxFruits/refs/heads/main/BetaHub-BF"))()
     end
 })
 
--- Misc & Luminon
-Tabs.Misc:AddButton({
-    Title = "🌟 Chạy Luminon Hub",
-    Callback = function()
-        Window:Minimize()
-        loadstring(game:HttpGet("http://luminon.top/loader.lua"))()
-    end
+-- >>>>>>> TAB 5: TIỆN ÍCH (MISC) <<<<<<<
+
+Tabs.Misc:AddParagraph({
+    Title = "Công cụ hỗ trợ",
+    Content = "Các chức năng giúp giảm lag, tối ưu hóa đồ họa cho máy yếu."
 })
 
 Tabs.Misc:AddButton({
     Title = "🚀 Giảm Lag (Smooth)",
+    Description = "Xóa Texture, làm mượt đồ họa để tăng FPS",
     Callback = function()
         task.spawn(function()
             for i,v in pairs(game.Workspace:GetDescendants()) do
@@ -194,9 +164,9 @@ Tabs.Misc:AddButton({
                 end
             end
         end)
-        Fluent:Notify({Title = "Xong", Content = "Đã giảm lag thành công", Duration = 3})
+        Fluent:Notify({Title = "Thành công", Content = "Đã tối ưu hóa đồ họa!", Duration = 3})
     end
 })
 
--- Kết thúc
-Window:SelectTab(1) -- Tự động chọn Tab đầu tiên (Tsunami)
+-- 5. KẾT THÚC
+Window:SelectTab(1)
