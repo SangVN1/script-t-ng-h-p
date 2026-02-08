@@ -1,26 +1,33 @@
 --[[
-    REDYN HUB - SCRIPT BY SANG
-    Version: No Doors Edition
-    Support: Mobile (Nút bật tắt), PC, Xeno
+    REDYN HUB - MASTER COLLECTION
+    Author: Sang
+    Library: Fluent UI
+    Support: PC & Mobile (Toggle Button included)
+    Note: Removed Doors Tab
 ]]
 
--- 1. CHUẨN BỊ & DỌN DẸP GIAO DIỆN CŨ
+-- 1. KHỞI TẠO & DỌN DẸP
 if not game:IsLoaded() then game.Loaded:Wait() end
 
-for i,v in pairs(game.CoreGui:GetChildren()) do
+-- Xóa các GUI cũ để tránh bị trùng lặp
+for _, v in pairs(game.CoreGui:GetChildren()) do
     if v.Name == "RedynMobileToggle" or (v.Name == "ScreenGui" and v:FindFirstChild("Frame")) then
         v:Destroy()
     end
 end
 
--- 2. TẢI THƯ VIỆN GIAO DIỆN (FLUENT UI)
+-- 2. TẢI THƯ VIỆN FLUENT UI
 local Fluent = nil
 local success, err = pcall(function()
     Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 end)
 
 if not success or not Fluent then
-    game.StarterGui:SetCore("SendNotification", {Title = "Lỗi Mạng", Text = "Vui lòng kiểm tra kết nối internet!", Duration = 5})
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Redyn Hub Lỗi",
+        Text = "Không thể tải thư viện UI. Kiểm tra mạng!",
+        Duration = 5
+    })
     return
 end
 
@@ -29,16 +36,16 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 -- 3. CẤU HÌNH CỬA SỔ MENU
 local Window = Fluent:CreateWindow({
-    Title = "Redyn Hub | Master Collection",
-    SubTitle = "Script by Sang", -- >> TÊN CỦA BẠN <<
+    Title = "Redyn Hub | Script by Sang",
+    SubTitle = "Master Collection",
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
-    Acrylic = false, -- Tắt mờ nền để Mobile/Xeno chạy mượt nhất
+    Acrylic = false, -- Tắt Acrylic để tối ưu FPS cho Mobile
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- 4. TẠO NÚT TRÒN BẬT/TẮT CHO ĐIỆN THOẠI (MOBILE TOGGLE)
+-- 4. TẠO NÚT BẬT/TẮT CHO MOBILE (MOBILE TOGGLE)
 local UserInputService = game:GetService("UserInputService")
 if UserInputService.TouchEnabled then
     local ScreenGui = Instance.new("ScreenGui")
@@ -50,17 +57,17 @@ if UserInputService.TouchEnabled then
     
     ToggleBtn.Name = "ToggleBtn"
     ToggleBtn.Parent = ScreenGui
-    ToggleBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    ToggleBtn.Position = UDim2.new(0.9, -50, 0.5, 0) -- Vị trí nút (bên phải)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    ToggleBtn.Position = UDim2.new(0.9, -50, 0.5, 0) -- Vị trí bên phải màn hình
     ToggleBtn.Size = UDim2.new(0, 50, 0, 50)
-    ToggleBtn.Image = "rbxassetid://10057361026" -- Icon Redyn
-    ToggleBtn.Draggable = true -- Có thể kéo nút đi chỗ khác
+    ToggleBtn.Image = "rbxassetid://10057361026" -- Icon Redyn/Logo
+    ToggleBtn.Draggable = true -- Cho phép kéo nút
     ToggleBtn.Active = true
     
-    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.CornerRadius = UDim.new(1, 0) -- Bo tròn nút
     UICorner.Parent = ToggleBtn
     
-    -- Chức năng: Giả lập phím Ctrl để bật tắt menu
+    -- Xử lý sự kiện click để ẩn/hiện menu
     ToggleBtn.MouseButton1Click:Connect(function()
         local vim = game:GetService("VirtualInputManager")
         vim:SendKeyEvent(true, Enum.KeyCode.LeftControl, false, game)
@@ -69,18 +76,19 @@ if UserInputService.TouchEnabled then
     end)
 end
 
--- 5. TẠO CÁC TAB CHỨC NĂNG (ĐÃ XÓA DOORS)
+-- 5. TẠO TAB & CHỨC NĂNG (ĐÃ XÓA DOORS)
 local Tabs = {
-    BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),           
+    -- Đã xóa Doors
+    BSS = Window:AddTab({ Title = "Bee Swarm", Icon = "bug" }),            
     BloxFruit = Window:AddTab({ Title = "Blox Fruits", Icon = "swords" }),
     Misc = Window:AddTab({ Title = "Tiện ích", Icon = "wrench" }), 
     Settings = Window:AddTab({ Title = "Cài đặt", Icon = "settings" })
 }
 
--- >> TAB: BEE SWARM SIMULATOR
+-- >> TAB: BEE SWARM
 Tabs.BSS:AddButton({
     Title = "Chạy Atlas BSS",
-    Description = "Auto Farm Ong, Auto Quest",
+    Description = "Auto Farm Mật, Auto Quest, Kill Vicious",
     Callback = function()
         Window:Minimize()
         task.spawn(function()
@@ -89,31 +97,47 @@ Tabs.BSS:AddButton({
     end
 })
 
--- >> TAB: BLOX FRUITS (BETA HUB)
+-- >> TAB: BLOX FRUITS
 Tabs.BloxFruit:AddButton({
     Title = "🍉 Chạy Beta Hub",
-    Description = "Auto Farm + Auto Team Pirates",
+    Description = "Auto Farm Level, Auto Raid, Auto Pirates",
     Callback = function()
-        Fluent:Notify({Title = "Script by Sang", Content = "Đang tải Beta Hub...", Duration = 3})
+        Fluent:Notify({Title = "Redyn Hub", Content = "Đang tải Beta Hub...", Duration = 3})
         Window:Minimize()
         
         task.spawn(function()
-            -- 1. Chờ game load xong
-            repeat task.wait() until game:IsLoaded()
-            -- 2. Chọn Team Hải Tặc
-            pcall(function() getgenv().team = "Pirates" end)
-            -- 3. Chạy Beta Hub
+            if not game:IsLoaded() then game.Loaded:Wait() end
+            -- Tự động chọn phe Hải Tặc
+            pcall(function() 
+                local Button = game:GetService("Players").LocalPlayer.PlayerGui.Main.ChooseTeam.Container.Pirates.Frame.TextButton
+                if Button then 
+                    for i,v in pairs(getconnections(Button.MouseButton1Click)) do
+                        v:Fire()
+                    end
+                end
+            end)
+            -- Load Script
             loadstring(game:HttpGet("https://raw.githubusercontent.com/Anniecreate86/BloxFruits/refs/heads/main/BetaHub-BF"))()
         end)
     end
 })
 
--- >> TAB: TIỆN ÍCH CHUNG
+-- >> TAB: TIỆN ÍCH (MISC)
 Tabs.Misc:AddButton({
-    Title = "🚀 Giảm Lag (Anti-Crash)",
-    Description = "Xóa texture giúp máy yếu chơi mượt",
+    Title = "🚀 FPS Boost (Giảm Lag)",
+    Description = "Xóa Texture, làm mượt đồ họa",
     Callback = function()
         task.spawn(function()
+            local Terrain = workspace:FindFirstChildOfClass('Terrain')
+            if Terrain then 
+                Terrain.WaterWaveSize = 0
+                Terrain.WaterWaveSpeed = 0
+                Terrain.WaterReflectance = 0
+                Terrain.WaterTransparency = 0
+            end
+            lighting = game:GetService("Lighting")
+            lighting.GlobalShadows = false
+            lighting.FogEnd = 9e9
             for i,v in pairs(game.Workspace:GetDescendants()) do
                 if v:IsA("BasePart") and not v.Parent:FindFirstChild("Humanoid") then
                     v.Material = Enum.Material.Plastic
@@ -123,22 +147,20 @@ Tabs.Misc:AddButton({
                 end
             end
         end)
-        Fluent:Notify({Title = "Xong!", Content = "Đã tối ưu hóa.", Duration = 3})
+        Fluent:Notify({Title = "Thành công", Content = "Đã tối ưu hóa đồ họa!", Duration = 3})
     end
 })
 
--- 6. HOÀN TẤT & LƯU CẤU HÌNH
-pcall(function()
-    SaveManager:SetLibrary(Fluent)
-    InterfaceManager:SetLibrary(Fluent)
-    SaveManager:IgnoreThemeSettings()
-    SaveManager:SetIgnoreIndexes({})
-    InterfaceManager:BuildInterfaceSection(Tabs.Settings)
-    Window:SelectTab(1)
-end)
+-- 6. HOÀN TẤT
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+Window:SelectTab(1)
 
 Fluent:Notify({
-    Title = "Chào mừng!",
-    Content = "Script by Sang đã khởi động thành công.",
+    Title = "Redyn Hub",
+    Content = "Script by Sang đã khởi động thành công!",
     Duration = 5
 })
