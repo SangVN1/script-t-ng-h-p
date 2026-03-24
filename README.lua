@@ -552,57 +552,12 @@ UIRefs.SpamSpeedToggle = AutoFarmTab:CreateToggle({
     Flag = "SpamSpeedToggle",
     Callback = function(Value)
         SpamSpeedEnabled = Value
-        if Value then
-            task.spawn(function()
-                local remote = ReplicatedStorage:FindFirstChild("Events") and ReplicatedStorage.Events:FindFirstChild("GameRemoteFunction")
-                if not remote then return end
-
-                while SpamSpeedEnabled do
-                    local char = LocalPlayer.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                    local tool = char and char:FindFirstChildOfClass("Tool")
-                    
-                    if hrp and tool then
-                        local list = {}
-                        for _, enemy in pairs(Players:GetPlayers()) do
-                            if enemy ~= LocalPlayer and enemy.Character and enemy.Character:FindFirstChild("HumanoidRootPart") then
-                                for i = 1, 500 do
-                                    table.insert(list, {
-                                        knockback = 146.25,
-                                        isClosestEnemy = false,
-                                        origin = Vector3.new(hrp.Position.X, hrp.Position.Y, hrp.Position.Z),
-                                        enemyModel = enemy.Character,
-                                        distance = 0,
-                                        direction = Vector3.new(0,0,0)
-                                    })
-                                end
-                            end
-                        end
-                        
-                        if #list > 0 then
-                            task.spawn(function()
-                                pcall(function()
-                                    remote:InvokeServer("AttemptWeaponHit", {
-                                        damage = 999999, 
-                                        attackCooldown = 0, 
-                                        cycleIndex = 4,
-                                        tool = tool,
-                                        hitboxSize = Vector3.new(999, 999, 999) 
-                                    }, list)
-                                end)
-                            end)
-                        end
-                    end
-                    task.wait(0.05)
-                end
-            end)
-        end
     end,
 })
 
 AutoFarmTab:CreateParagraph({
-    Title = "Attention",
-    Content = "When this feature is enabled, DO NOT equip any weapon to avoid crashes and FPS drops. Let the script handle everything automatically."
+    Title = "Note",
+    Content = "Use this before it gets patched (VERY OP)"
 })
 
 AutoFarmTab:CreateSection("AutoFarm settings (Default)")
@@ -809,18 +764,21 @@ task.spawn(function()
     while task.wait() do
         pcall(function()
             if not isAlive(LocalPlayer) then wasInLobby = true; return end
+            
             if AutoAttackAllEnabled then
                 local char = LocalPlayer.Character
                 local currentLocation = GetCurrentLocation(char)
+                
                 if currentLocation == "Match" and wasInLobby then
                     wasInLobby = false
                     local humanoid = char:FindFirstChild("Humanoid")
                     local tool = LocalPlayer.Backpack:FindFirstChildOfClass("Tool")
                     if tool and humanoid then
                         humanoid:EquipTool(tool)
+                        
                         if SpamSpeedEnabled then
                             task.spawn(function()
-                                task.wait(3)
+                                task.wait(2.5) 
                                 if isAlive(LocalPlayer) then
                                     LocalPlayer.Character.Humanoid:UnequipTools()
                                 end
@@ -830,9 +788,50 @@ task.spawn(function()
                 elseif currentLocation == "Lobby" and not wasInLobby then
                     wasInLobby = true
                 end
-                if currentLocation == "Match" and not SpamSpeedEnabled then
+                
+                if currentLocation == "Match" then
                     local CurrentTool = char:FindFirstChildOfClass("Tool")
-                    if CurrentTool then AttackAllTargetsOnce(CurrentTool) end
+                    if CurrentTool then
+                        if SpamSpeedEnabled then
+                            local remote = ReplicatedStorage:FindFirstChild("Events") and ReplicatedStorage.Events:FindFirstChild("GameRemoteFunction")
+                            local hrp = char:FindFirstChild("HumanoidRootPart")
+                            if remote and hrp then
+                                local list = {}
+                                for _, enemy in pairs(Players:GetPlayers()) do
+                                    if enemy ~= LocalPlayer and enemy.Character and enemy.Character:FindFirstChild("HumanoidRootPart") then
+                                        for i = 1, 1000 do
+                                            table.insert(list, {
+                                                knockback = 146.25,
+                                                isClosestEnemy = false,
+                                                origin = Vector3.new(hrp.Position.X, hrp.Position.Y, hrp.Position.Z),
+                                                enemyModel = enemy.Character,
+                                                distance = 0,
+                                                direction = Vector3.new(0,0,0)
+                                            })
+                                        end
+                                    end
+                                end
+                                
+                                if #list > 0 then
+                                    task.spawn(function()
+                                        pcall(function()
+                                            remote:InvokeServer("AttemptWeaponHit", {
+                                                damage = 999999, 
+                                                attackCooldown = 0, 
+                                                cycleIndex = 4,
+                                                tool = CurrentTool,
+                                                hitboxSize = Vector3.new(999, 999, 999) 
+                                            }, list)
+                                        end)
+                                    end)
+                                end
+                            end
+                            task.wait(0.05)
+                        else
+                            AttackAllTargetsOnce(CurrentTool)
+                            task.wait(0.05)
+                        end
+                    end
                 end
             end
         end)
